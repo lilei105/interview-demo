@@ -1,0 +1,253 @@
+openapi: 3.0.3
+info:
+  title: 基础项目框架 - API文档
+  description: FastAPI后端服务基础框架的API端点
+  version: 1.0.0
+  contact:
+    name: 开发团队
+    email: dev@example.com
+
+servers:
+  - url: http://127.0.0.1:8000
+    description: 开发服务器
+
+paths:
+  /:
+    get:
+      summary: 根路由
+      description: 返回API服务基本信息
+      operationId: get_root
+      tags:
+        - 基础
+      responses:
+        '200':
+          description: 成功返回服务信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceInfo'
+              example:
+                name: "基础项目框架API"
+                version: "1.0.0"
+                description: "FastAPI后端服务"
+                status: "running"
+                timestamp: "2025-10-21T10:00:00Z"
+
+  /health:
+    get:
+      summary: 健康检查
+      description: 检查服务健康状态
+      operationId: get_health
+      tags:
+        - 监控
+      responses:
+        '200':
+          description: 服务健康
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+              example:
+                status: "healthy"
+                timestamp: "2025-10-21T10:00:00Z"
+                version: "1.0.0"
+                uptime: 3600
+                dependencies:
+                  - name: "configuration"
+                    status: "healthy"
+                  - name: "logging"
+                    status: "healthy"
+        '503':
+          description: 服务不健康
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+              example:
+                status: "unhealthy"
+                timestamp: "2025-10-21T10:00:00Z"
+                version: "1.0.0"
+                uptime: 3600
+                dependencies:
+                  - name: "database"
+                    status: "unhealthy"
+                    error: "Connection timeout"
+
+  /api/v1/config:
+    get:
+      summary: 获取当前配置
+      description: 返回当前服务配置信息（不包含敏感信息）
+      operationId: get_config
+      tags:
+        - 配置
+      responses:
+        '200':
+          description: 配置信息
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigInfo'
+              example:
+                environment: "development"
+                debug: true
+                host: "127.0.0.1"
+                port: 8000
+                log_level: "info"
+
+components:
+  schemas:
+    ServiceInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 服务名称
+          example: "基础项目框架API"
+        version:
+          type: string
+          description: 服务版本
+          example: "1.0.0"
+        description:
+          type: string
+          description: 服务描述
+          example: "FastAPI后端服务"
+        status:
+          type: string
+          description: 服务状态
+          enum: ["running", "starting", "stopping", "stopped"]
+          example: "running"
+        timestamp:
+          type: string
+          format: date-time
+          description: 响应时间戳
+          example: "2025-10-21T10:00:00Z"
+      required:
+        - name
+        - version
+        - status
+        - timestamp
+
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          description: 健康状态
+          enum: ["healthy", "degraded", "unhealthy"]
+          example: "healthy"
+        timestamp:
+          type: string
+          format: date-time
+          description: 检查时间戳
+          example: "2025-10-21T10:00:00Z"
+        version:
+          type: string
+          description: 服务版本
+          example: "1.0.0"
+        uptime:
+          type: integer
+          description: 运行时间（秒）
+          example: 3600
+          minimum: 0
+        dependencies:
+          type: array
+          description: 依赖状态列表
+          items:
+            $ref: '#/components/schemas/DependencyStatus'
+      required:
+        - status
+        - timestamp
+        - version
+        - uptime
+
+    DependencyStatus:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 依赖名称
+          example: "configuration"
+        status:
+          type: string
+          description: 依赖状态
+          enum: ["healthy", "unhealthy"]
+          example: "healthy"
+        error:
+          type: string
+          description: 错误信息（如果状态为unhealthy）
+          example: "Connection timeout"
+      required:
+        - name
+        - status
+
+    ConfigInfo:
+      type: object
+      properties:
+        environment:
+          type: string
+          description: 运行环境
+          enum: ["development", "testing", "staging", "production"]
+          example: "development"
+        debug:
+          type: boolean
+          description: 调试模式
+          example: true
+        host:
+          type: string
+          description: 服务主机
+          example: "127.0.0.1"
+        port:
+          type: integer
+          description: 服务端口号
+          example: 8000
+          minimum: 1024
+          maximum: 65535
+        log_level:
+          type: string
+          description: 日志级别
+          enum: ["debug", "info", "warning", "error", "critical"]
+          example: "info"
+      required:
+        - environment
+        - debug
+        - host
+        - port
+        - log_level
+
+  responses:
+    ErrorResponse:
+      description: 错误响应
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: 错误类型
+                example: "not_found"
+              message:
+                type: string
+                description: 错误消息
+                example: "请求的资源不存在"
+              detail:
+                type: string
+                description: 详细错误信息
+                example: "路径 /api/unknown 未找到"
+              timestamp:
+                type: string
+                format: date-time
+                description: 错误发生时间
+                example: "2025-10-21T10:00:00Z"
+            required:
+              - error
+              - message
+              - timestamp
+
+tags:
+  - name: 基础
+    description: 基础API端点
+  - name: 监控
+    description: 服务监控和健康检查
+  - name: 配置
+    description: 系统配置管理
