@@ -1,50 +1,139 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+同步影响报告
+版本变更: 0.0.0 → 1.0.0 (初始章程)
+修改原则: 无 (新章程)
+新增章节: 核心原则、质量标准、开发流程、治理规范
+删除章节: 无
+模板更新: ✅ 所有模板已审查并对齐
+后续待办: 无
+-->
 
-## Core Principles
+# SimpleCode 项目章程
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+## 核心原则
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### I. 简洁优先 (不可违背)
+选择满足需求的最简单方案。复杂性必须有明确必要性作为正当理由。
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- 从最直接了当的实现开始
+- 避免过早优化和过度工程化
+- 优先使用成熟的模式和库
+- 仅在复杂性带来明确价值时才进行重构
+- 每个抽象都必须解决具体问题
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**原理**: 简洁的代码更容易理解、测试、维护和调试。复杂性会引入错误并拖慢开发进度。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### II. 需求驱动开发
+代码的存在仅仅是为了满足明确指定的需求。没有文档化需求的功能一律不实现。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+- 仅实现明确请求的功能
+- 质疑"有了更好"的假设
+- 记录每个实现选择背后的"原因"
+- 未经利益相关者批准拒绝范围蔓延
+- 每行代码都必须服务于既定目的
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+**原理**: 仅构建所需功能可以防止浪费、减少维护负担并更快交付价值。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### III. 通过测试保证质量 (不可违背)
+质量通过全面测试来验证，而不是通过流程假设。
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- 编写能够证明功能按规范工作的测试
+- 在适当层面进行测试（单元、集成、契约）
+- 测试必须在实现开始前失败
+- 维护关键路径的测试覆盖率
+- 自动化测试优先于手动验证
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+**原理**: 测试提供代码工作的客观证据并防止回归。
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### IV. 明确优于隐晦
+相比巧妙的抽象和隐藏行为，更青睐明确清晰的代码。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+- 为变量、函数和类使用描述性名称
+- 记录复杂的业务逻辑和算法
+- 避免魔法数字和硬编码值
+- 让依赖关系和需求可见
+- 相比复杂模式更青睐直接逻辑
+
+**原理**: 明确的代码是自文档化的，并减少开发者的认知负担。
+
+### V. 增量交付
+以小型可测试的增量交付可工作的软件。
+
+- 将功能分解为最小可行片段
+- 每个增量必须可独立测试
+- 尽早且频繁地部署
+- 频繁与利益相关者验证
+- 在可工作的基础上构建
+
+**原理**: 小增量降低风险、实现更快反馈并确保持续进展。
+
+## 质量标准
+
+### 代码质量
+- 函数应该做好一件事（单一职责原则）
+- 保持函数简短专注（目标少于20行）
+- 最小化嵌套深度（优先提前返回）
+- 显式优雅地处理错误
+- 验证输入并清理输出
+
+### 文档标准
+- 记录"为什么"，不仅仅是"是什么"
+- 让文档靠近代码
+- 代码变更时同步更新文档
+- 为复杂逻辑包含示例
+- 维护清晰的README文件
+
+### 性能考量
+- 仅在性能被测量并出现问题时才优化
+- 相比微观优化更青睐可读代码
+- 在数据结构选择中考虑算法复杂度
+- 优化前先进行分析
+- 记录性能权衡
+
+## 开发流程
+
+### 实现前
+1. 完全理解需求
+2. 确定最简单可行的解决方案
+3. 编写定义预期行为的测试
+4. 获得利益相关者对方案的批准
+5. 搭建开发环境
+
+### 实现中
+1. 从失败的测试开始
+2. 实现使测试通过的最少代码
+3. 在保持测试的同时为清晰度重构
+4. 频繁提交并附带清晰消息
+5. 尽早且频繁地寻求反馈
+
+### 实现后
+1. 验证所有测试通过
+2. 审查代码的简洁性和清晰度
+3. 更新文档
+4. 部署到暂存环境
+5. 与利益相关者验证
+
+## 治理规范
+
+### 修订流程
+- 章程变更需要明确正当理由
+- 所有原则必须与简洁目标保持一致
+- 变更必须记录并附带原理
+- 修改需要团队共识
+- 版本号遵循语义化版本控制
+
+### 合规要求
+- 所有代码必须通过章程检查
+- 复杂性必须有正当理由并记录
+- 测试要求不可违背
+- 定期审查确保持续遵守
+- 违规需要补救计划
+
+### 决策权限
+- 技术决策默认为最简单可行选项
+- 需求澄清优先于假设
+- 质量标准不能为速度妥协
+- 增加复杂性需要利益相关者批准
+- 团队对简洁性保持集体责任
+
+**版本**: 1.0.0 | **批准**: 2025-10-21 | **最后修订**: 2025-10-21
